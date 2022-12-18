@@ -15,8 +15,35 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers, permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+router = routers.DefaultRouter()
+
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Streaming API",
+      default_version='v1',
+      description="API para el consumo de material multimedia",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="lumaaviles0@gmail.com"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('streaming.urls'))
+    path('', include('streaming.urls')),
+
+    path('api/', include('authentication.urls')),
+    path('api/', include(router.urls)),
+
+    path('docs/', schema_view.with_ui('swagger',
+        cache_timeout=0), name='schema-swagger-ui'),
+    path('redocs/', schema_view.with_ui('redoc',
+        cache_timeout=0), name='schema-redoc'),
 ]

@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Audiovisual, Genero, Tipo
+
+admin.site.register(Audiovisual)
+admin.site.register(Genero)
+admin.site.register(Tipo)
+

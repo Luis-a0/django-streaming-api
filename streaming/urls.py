@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .api import AudiovisualViewSet
+from .views import AudiovisualViewSet
 
 router = routers.DefaultRouter()
 
