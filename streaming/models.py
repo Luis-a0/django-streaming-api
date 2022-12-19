@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Sum
+from django.db.models.signals import post_save
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -59,3 +61,19 @@ class AudiovisualUser(models.Model):
         unique_together = ['media', 'user']
         ordering = ['media__nombre']
 
+def update_audiovisual_stats(sender, instance, **kwargs):
+    count_visualizaciones = AudiovisualUser.objects.filter(
+        media=instance.media, visto=True).count()
+    instance.media.visualizaciones = count_visualizaciones
+    puntuaciones = AudiovisualUser.objects.filter(
+        media=instance.media).exclude(visto__isnull=True)
+    count_puntuaciones = puntuaciones.count()
+    sum_notes = puntuaciones.aggregate(Sum('puntuacion')).get('puntuacion__sum')
+    try:
+        instance.film.average_note = round(sum_notes/count_puntuaciones, 2)
+    except:
+        pass
+    instance.media.save()
+
+
+post_save.connect(update_audiovisual_stats, sender=AudiovisualUser)

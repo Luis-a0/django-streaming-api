@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+
 from rest_framework import routers, permissions
+
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+
+from streaming import views as media_views
 
 router = routers.DefaultRouter()
 
@@ -41,6 +45,7 @@ urlpatterns = [
 
     path('api/', include('authentication.urls')),
     path('api/', include(router.urls)),
+    path('api/mediauser/', media_views.MediaUserViewSet.as_view()),
 
     path('docs/', schema_view.with_ui('swagger',
         cache_timeout=0), name='schema-swagger-ui'),
